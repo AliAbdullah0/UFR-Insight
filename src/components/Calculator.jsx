@@ -22,15 +22,22 @@ const UfrCalculator = () => {
   const [ufr, setUfr] = useState(null);
   const [remark, setRemark] = useState("");
   const [ufrHistory, setUfrHistory] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [chartLoading, setChartLoading] = useState(true);
 
   useEffect(() => {
     const fetchUfrData = async () => {
+      setChartLoading(true);
       const { data, error } = await supabase
         .from("ufr_data")
-        .select("ufr, created_at")
+        .select("ufr, remark, created_at")
         .order("created_at", { ascending: true });
 
-      if (!error) setUfrHistory(data);
+      if (!error) {
+        setUfrHistory(data);
+      }
+      setChartLoading(false);
     };
 
     fetchUfrData();
@@ -38,22 +45,44 @@ const UfrCalculator = () => {
 
   const saveToSupabase = async (data) => {
     const { error } = await supabase.from("ufr_data").insert([data]);
-    if (error) console.error("Error saving data:", error);
+    if (error) {
+      console.error("Error saving data:", error);
+      setError("❌ Failed to save data. Please try again.");
+    }
   };
 
   const calculateUFR = async () => {
+    setError("");
+    setLoading(true);
+
     const fluidRemovedLiters = parseFloat(fluidRemoved) / 1000;
     const weight = parseFloat(patientWeight);
     const time = parseFloat(treatmentTime);
 
-    if (isNaN(fluidRemovedLiters) || isNaN(weight) || isNaN(time) || time <= 0 || weight <= 0) {
+    if (
+      isNaN(fluidRemovedLiters) ||
+      isNaN(weight) ||
+      isNaN(time) ||
+      fluidRemovedLiters <= 0 ||
+      weight <= 0 ||
+      time <= 0
+    ) {
       setUfr(null);
-      setRemark("❌ Please enter valid numbers for all fields.");
+      setRemark("❌ Please enter valid positive numbers for all fields.");
+      setLoading(false);
+      return;
+    }
+
+    if (time > 24) {
+      setUfr(null);
+      setRemark("❌ Treatment time cannot exceed 24 hours.");
+      setLoading(false);
       return;
     }
 
     const calculatedUFR = (fluidRemovedLiters * 1000) / (weight * time);
-    setUfr(calculatedUFR.toFixed(2));
+    const formattedUFR = calculatedUFR.toFixed(2);
+    setUfr(formattedUFR);
 
     const newRemark =
       calculatedUFR <= 13
@@ -66,16 +95,18 @@ const UfrCalculator = () => {
       fluid_removed: fluidRemoved,
       patient_weight: patientWeight,
       treatment_time: treatmentTime,
-      ufr: calculatedUFR.toFixed(2),
+      ufr: formattedUFR,
+      remark: newRemark, // ✅ Fix: Ensure "remark" is not NULL
       created_at: new Date().toISOString(),
     });
 
     const { data, error } = await supabase
       .from("ufr_data")
-      .select("ufr, created_at")
+      .select("ufr, remark, created_at")
       .order("created_at", { ascending: true });
 
     if (!error) setUfrHistory(data);
+    setLoading(false);
   };
 
   const chartData = {
@@ -91,51 +122,17 @@ const UfrCalculator = () => {
         pointRadius: 5,
         pointHoverRadius: 7,
       },
-      {
-        label: "Safe UFR Threshold (13 ml/kg/hr)",
-        data: Array(ufrHistory.length).fill(13),
-        borderColor: "#EF4444",
-        borderWidth: 2,
-        borderDash: [5, 5],
-        pointRadius: 0,
-        hidden: true,
-      },
     ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        labels: {
-          color: "#D1D5DB",
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          color: "#6B7280",
-        },
-      },
-      y: {
-        ticks: {
-          color: "#6B7280",
-        },
-      },
-    },
   };
 
   return (
     <motion.section
       className="w-full min-h-screen dark:bg-gray-900 flex flex-col items-center justify-center p-8"
       initial={{ opacity: 0, y: 50 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: false }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
     >
-      <motion.h2 id="ufr-calculator" className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
+      <motion.h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
         Ultrafiltration Rate (UFR) Calculator
       </motion.h2>
 
@@ -173,15 +170,22 @@ const UfrCalculator = () => {
           />
         </div>
 
-        <button
+        <motion.button
           onClick={calculateUFR}
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg flex justify-center items-center hover:bg-blue-700"
+          whileTap={{ scale: 0.95 }}
+          disabled={loading}
         >
-          Calculate UFR
-        </button>
+          {loading ? (
+            <span className="animate-spin h-5 w-5 border-4 border-white border-t-transparent rounded-full"></span>
+          ) : (
+            "Calculate UFR"
+          )}
+        </motion.button>
 
+        {/* 📌 Result Display (Shows calculated UFR and remark) */}
         {ufr !== null && (
-          <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Result:</h3>
             <p className="text-gray-700 dark:text-gray-300">
               <strong>UFR:</strong> {ufr} ml/kg/hr
@@ -191,7 +195,50 @@ const UfrCalculator = () => {
             </p>
           </div>
         )}
+
       </motion.div>
+
+      {/* Chart Section with Skeleton Loader */}
+      <div className="mt-10 w-full flex flex-col md:flex-row gap-6">
+        {/* 📊 UFR Graph Section */}
+        <div className="md:w-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-4">
+            UFR Trend Over Time
+          </h3>
+
+          {/* 📌 Skeleton Loader for Chart */}
+          {chartLoading ? (
+            <div className="h-[400px] flex justify-center items-center">
+              <div className="animate-pulse w-full h-full bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
+            </div>
+          ) : (
+            <div className="h-[400px]">
+              <Line data={chartData} />
+            </div>
+          )}
+        </div>
+
+        {/* ℹ️ Understanding the Graph Section */}
+        <div className="md:w-1/2 bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            Understanding the Graph
+          </h3>
+          <p className="text-gray-700 dark:text-gray-300 mb-4">
+            The <span className="text-blue-500">blue line</span> represents the **historical UFR values**
+            recorded by all users of this calculator.
+          </p>
+          <p className="text-gray-700 dark:text-gray-300 mb-4">
+            The <span className="text-red-400">red dashed line</span> indicates the **safe threshold** (13 ml/kg/hr).
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <em>
+              This graph does not display **individual user data**, but rather a **cumulative trend**
+              of all UFR calculations made through this calculator.
+            </em>
+          </p>
+        </div>
+      </div>
+
     </motion.section>
   );
 };
