@@ -132,7 +132,7 @@ const UfrCalculator = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
     >
-      <motion.h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
+      <motion.h2 id="ufr-calculator" className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
         Ultrafiltration Rate (UFR) Calculator
       </motion.h2>
 
