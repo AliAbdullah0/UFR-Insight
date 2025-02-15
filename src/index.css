@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+.animate-fade {
+    animation: fadeIn 2s linear forwards;
+}
+
+::-webkit-scrollbar {
+  width: 2px; /* Thin scrollbar */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #1a59b2; /* gray-900 */
+  border-radius: 0px; /* No rounded corners */
+}
+
+/* 🔹 Change scrollbar color in dark mode */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+      background-color: #2264c0; /* gray-900 */
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}
+.nav-item {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-item a {
+    position: relative;
+    display: inline-block;
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .nav-item::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #2e65dc;
+    transition: width 0.3s ease, transform 0.3s ease;
+    transform: translateX(-100%);
+  }
+  
+  .nav-item:hover::after {
+    width: 100%;
+    transform: translateX(0);
+  }
+  
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    30% {
+        opacity: 0.5;
+        transform: translateY(6px);
+    }
+    50% {
+        opacity: 0.7;
+        transform: translateY(3px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
