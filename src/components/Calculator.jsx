@@ -98,24 +98,25 @@ const UfrCalculator = () => {
         borderWidth: 2,
         borderDash: [5, 5],
         pointRadius: 0,
-        hidden: true, // ✅ This hides the red line by default
+        hidden: true,
       },
     ],
   };
+
   const chartOptions = {
-    responsive: true, // Makes the chart responsive
-    maintainAspectRatio: false, // Allows custom height adjustments
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         labels: {
-          color: "#D1D5DB", // Tailwind text-gray-300 for dark mode
+          color: "#D1D5DB",
         },
       },
     },
     scales: {
       x: {
         ticks: {
-          color: "#6B7280", // Tailwind text-gray-500
+          color: "#6B7280",
         },
       },
       y: {
@@ -125,7 +126,6 @@ const UfrCalculator = () => {
       },
     },
   };
-  
 
   return (
     <motion.section
@@ -139,7 +139,7 @@ const UfrCalculator = () => {
         Ultrafiltration Rate (UFR) Calculator
       </motion.h2>
 
-      <motion.div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-md ">
+      <motion.div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 w-full max-w-md">
         <div className="mb-4">
           <label className="block text-gray-700 dark:text-gray-300 mb-2">Fluid Removed (ml)</label>
           <input
@@ -152,7 +152,7 @@ const UfrCalculator = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 dark:text-gray-300 mb-2"> Patient Dry Weight (kg)</label>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">Patient Dry Weight (kg)</label>
           <input
             type="number"
             value={patientWeight}
@@ -163,7 +163,7 @@ const UfrCalculator = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700 dark:text-gray-300 mb-2"> Treatment Duration (hrs)</label>
+          <label className="block text-gray-700 dark:text-gray-300 mb-2">Treatment Duration (hrs)</label>
           <input
             type="number"
             value={treatmentTime}
@@ -179,34 +179,19 @@ const UfrCalculator = () => {
         >
           Calculate UFR
         </button>
+
+        {ufr !== null && (
+          <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Result:</h3>
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>UFR:</strong> {ufr} ml/kg/hr
+            </p>
+            <p className={`mt-2 font-medium ${ufr <= 13 ? "text-green-500" : "text-yellow-500"}`}>
+              {remark}
+            </p>
+          </div>
+        )}
       </motion.div>
-
-      <div className="mt-20 w-full flex flex-col md:flex-row gap-6">
-      <div className="md:w-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
-  <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-4">
-    UFR Trend Over Time
-  </h3>
-  <div className="h-[300px] sm:h-[400px] md:h-[450px]"> {/* Chart Box Adjusted */}
-    <Line data={chartData} options={chartOptions} /> {/* Pass new options */}
-  </div>
-</div>
-
-
-
-        <div className="md:w-1/2 bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Understanding the Graph
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The <span className="text-blue-500">blue line</span> represents the historical UFR values recorded by all users of this calculator.
-            The <span className="text-red-400">red dashed line</span> indicates the safe threshold (13 ml/kg/hr).
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            _This graph does not display individual user data but shows a cumulative trend of all UFR calculations
-            made through this calculator._
-          </p>
-        </div>
-      </div>
     </motion.section>
   );
 };
