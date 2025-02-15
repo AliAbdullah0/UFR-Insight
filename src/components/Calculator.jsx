@@ -200,45 +200,64 @@ const UfrCalculator = () => {
       </motion.div>
 
       {/* Chart Section with Skeleton Loader */}
-      <div className="mt-10 w-full flex flex-col md:flex-row gap-6">
-        {/* 📊 UFR Graph Section */}
-        <div className="md:w-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-4">
-            UFR Trend Over Time
-          </h3>
+      <motion.div 
+  className="mt-10 w-full flex flex-col md:flex-row gap-6"
+  initial={{ opacity: 0, y: 50 }} 
+  whileInView={{ opacity: 1, y: 0 }} 
+  viewport={{ once: true }} 
+  transition={{ duration: 1 }}
+>
+  {/* 📊 UFR Graph Section */}
+  <motion.div 
+    className="md:w-1/2 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl"
+    initial={{ opacity: 0, x: -50 }} 
+    whileInView={{ opacity: 1, x: 0 }} 
+    viewport={{ once: true }} 
+    transition={{ duration: 1 }}
+  >
+    <h3 className="text-xl font-semibold text-gray-900 dark:text-white text-center mb-4">
+      UFR Trend Over Time
+    </h3>
 
-          {/* 📌 Skeleton Loader for Chart */}
-          {chartLoading ? (
-            <div className="h-[400px] flex justify-center items-center">
-              <div className="animate-pulse w-full h-full bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
-            </div>
-          ) : (
-            <div className="h-[400px]">
-              <Line data={chartData} />
-            </div>
-          )}
-        </div>
-
-        {/* ℹ️ Understanding the Graph Section */}
-        <div className="md:w-1/2 bg-white dark:bg-gray-900 p-6 rounded-lg shadow">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Understanding the Graph
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The <span className="text-blue-500">blue line</span> represents the historical UFR values
-            recorded by all users of this calculator.
-          </p>
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The <span className="text-red-400">red dashed line</span> indicates the <span className="font-semibold"> safe threshold </span>(13 ml/kg/hr).
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <em>
-              This graph does not display individual user data, but rather a cumulative trend
-              of all UFR calculations made through this calculator.
-            </em>
-          </p>
-        </div>
+    {/* 📌 Skeleton Loader for Chart */}
+    {chartLoading ? (
+      <div className="h-[400px] flex justify-center items-center">
+        <div className="animate-pulse w-full h-full bg-gray-300 dark:bg-gray-700 rounded-lg"></div>
       </div>
+    ) : (
+      <div className="h-[400px]">
+        <Line data={chartData} />
+      </div>
+    )}
+  </motion.div>
+
+  {/* ℹ️ Understanding the Graph Section */}
+  <motion.div 
+    className="md:w-1/2 bg-white dark:bg-gray-900 p-6 rounded-lg shadow"
+    initial={{ opacity: 0, x: 50 }} 
+    whileInView={{ opacity: 1, x: 0 }} 
+    viewport={{ once: true }} 
+    transition={{ duration: 1 }}
+  >
+    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      Understanding the Graph
+    </h3>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      The <span className="text-blue-500">blue line</span> represents the historical UFR values
+      recorded by all users of this calculator.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      The <span className="text-red-400">red dashed line</span> indicates the <span className="font-semibold"> safe threshold </span>(13 ml/kg/hr).
+    </p>
+    <p className="text-gray-700 dark:text-gray-300">
+      <em>
+        This graph does not display individual user data, but rather a cumulative trend
+        of all UFR calculations made through this calculator.
+      </em>
+    </p>
+  </motion.div>
+</motion.div>
+
 
     </motion.section>
   );
