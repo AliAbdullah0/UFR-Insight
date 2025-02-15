@@ -129,7 +129,8 @@ const UfrCalculator = () => {
     <motion.section
       className="w-full min-h-screen dark:bg-gray-900 flex flex-col items-center justify-center p-8"
       initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }} // ✅ Triggers animation only the first time
       transition={{ duration: 1 }}
     >
       <motion.h2 id="ufr-calculator" className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-4">
