@@ -224,15 +224,15 @@ const UfrCalculator = () => {
             Understanding the Graph
           </h3>
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The <span className="text-blue-500">blue line</span> represents the **historical UFR values**
+            The <span className="text-blue-500">blue line</span> represents the historical UFR values
             recorded by all users of this calculator.
           </p>
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            The <span className="text-red-400">red dashed line</span> indicates the **safe threshold** (13 ml/kg/hr).
+            The <span className="text-red-400">red dashed line</span> indicates the <span className="font-semibold"> safe threshold </span>(13 ml/kg/hr).
           </p>
           <p className="text-gray-700 dark:text-gray-300">
             <em>
-              This graph does not display **individual user data**, but rather a **cumulative trend**
+              This graph does not display individual user data, but rather a cumulative trend
               of all UFR calculations made through this calculator.
             </em>
           </p>
