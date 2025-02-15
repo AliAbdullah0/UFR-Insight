@@ -124,7 +124,29 @@ const UfrCalculator = () => {
       },
     ],
   };
-
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        labels: {
+          color: "#D1D5DB", // Tailwind text-gray-300 for dark mode
+        },
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: "#6B7280", // Tailwind text-gray-500
+        },
+      },
+      y: {
+        ticks: {
+          color: "#6B7280",
+        },
+      },
+    },
+  };
   return (
     <motion.section
       className="w-full min-h-screen dark:bg-gray-900 flex flex-col items-center justify-center p-8"
@@ -226,7 +248,7 @@ const UfrCalculator = () => {
       </div>
     ) : (
       <div className="h-[400px]">
-        <Line data={chartData} />
+        <Line data={chartData} options={chartOptions}/>
       </div>
     )}
   </motion.div>
